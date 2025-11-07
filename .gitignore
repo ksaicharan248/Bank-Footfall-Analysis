@@ -52,7 +52,6 @@ backend/logs/**/*
 *.db
 *.sqlite
 *.sqlite3
-*.sql
 databasedata/
 databasedata/*
 sql/data/
