@@ -298,30 +298,7 @@ docker-compose logs -f
 - **Setup Guides**: `AWS_CREDENTIALS_SETUP.md`, `NOVA_PRO_SETUP_GUIDE.md`
 - **Testing Guide**: `API_TESTING_GUIDE.md`
 
----
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/new-feature`)
-3. Commit changes (`git commit -m 'Add new feature'`)
-4. Push to branch (`git push origin feature/new-feature`)
-5. Create Pull Request
-
----
-
-## 📄 License
-
-This project is proprietary software developed for banking institutions.
-
----
-
-## 👥 Support & Contact
-
-**Development Team**: Enterprise Development Team  
-**Version**: 1.0.0  
-**Last Updated**: December 2024  
-**Support**: technical-support@company.com
 
 ---
 
