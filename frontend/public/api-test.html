@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatBot API Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .result { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background: #d4edda; }
+        .error { background: #f8d7da; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>ABC Bank ChatBot API Test</h1>
+    <button onclick="testFootfallAPI()">Test Footfall API</button>
+    <button onclick="testPredictionAPI()">Test Prediction API</button>
+    <div id="result"></div>
+
+    <script>
+        async function testFootfallAPI() {
+            const result = document.getElementById('result');
+            result.innerHTML = 'Testing footfall API...';
+            
+            try {
+                const endDate = new Date().toISOString().split('T')[0];
+                const startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                
+                const response = await fetch(`http://localhost:8080/analytics/footfall-trends?startDate=${startDate}&endDate=${endDate}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const latest = data[data.length - 1];
+                    
+                    result.className = 'result success';
+                    result.innerHTML = `
+                        <h3>✅ Footfall API Working!</h3>
+                        <p><strong>Total Records:</strong> ${data.length}</p>
+                        <p><strong>Latest Data (${latest.date}):</strong></p>
+                        <ul>
+                            <li>Siruseri: ${latest.siruseri} visitors</li>
+                            <li>T Nagar: ${latest.tnagar} visitors</li>
+                            <li>Navalur: ${latest.navalur} visitors</li>
+                            <li>Total: ${latest.total} visitors</li>
+                        </ul>
+                        <p><strong>ChatBot Response:</strong> "📊 Latest Footfall Data (${latest.date}): New York: ${latest.siruseri} visitors, Washington DC: ${latest.tnagar} visitors, New Jersey: ${latest.navalur} visitors. Total: ${latest.total} visitors across all branches."</p>
+                    `;
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                result.className = 'result error';
+                result.innerHTML = `<h3>❌ API Error:</h3><p>${error.message}</p>`;
+            }
+        }
+        
+        async function testPredictionAPI() {
+            const result = document.getElementById('result');
+            result.innerHTML = 'Testing prediction API...';
+            
+            try {
+                const endDate = new Date().toISOString().split('T')[0];
+                const startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                
+                const response = await fetch(`http://localhost:8080/analytics/footfall-trends-with-prediction?startDate=${startDate}&endDate=${endDate}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const predictions = data.filter(item => item.predicted === true);
+                    const historical = data.filter(item => item.predicted !== true);
+                    
+                    result.className = 'result success';
+                    result.innerHTML = `
+                        <h3>✅ Prediction API Working!</h3>
+                        <p><strong>Historical Records:</strong> ${historical.length}</p>
+                        <p><strong>Prediction Records:</strong> ${predictions.length}</p>
+                        <h4>Next 7 Days Predictions:</h4>
+                        <ul>
+                            ${predictions.slice(0, 7).map(p => 
+                                `<li>${p.date}: NY: ${p.siruseri}, DC: ${p.tnagar}, NJ: ${p.navalur} (Total: ${p.total})</li>`
+                            ).join('')}
+                        </ul>
+                    `;
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                result.className = 'result error';
+                result.innerHTML = `<h3>❌ API Error:</h3><p>${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

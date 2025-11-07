@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABC Bank ChatBot Database Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-container { max-width: 800px; margin: 0 auto; }
+        .api-test { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .result { margin: 10px 0; padding: 10px; background: #f5f5f5; border-radius: 3px; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>ABC Bank ChatBot Database Integration Test</h1>
+        <p>This test verifies that the ChatBot can access real-time database information and apply name swapping correctly.</p>
+        
+        <div class="api-test">
+            <h3>1. Test Database Connection</h3>
+            <button onclick="testDatabaseConnection()">Test API Endpoints</button>
+            <div id="db-result" class="result"></div>
+        </div>
+        
+        <div class="api-test">
+            <h3>2. Test Footfall Prediction</h3>
+            <button onclick="testFootfallPrediction()">Test 7-Day Prediction</button>
+            <div id="prediction-result" class="result"></div>
+        </div>
+        
+        <div class="api-test">
+            <h3>3. Test Name Swapping</h3>
+            <button onclick="testNameSwapping()">Test Branch Name Conversion</button>
+            <div id="name-result" class="result"></div>
+        </div>
+        
+        <div class="api-test">
+            <h3>4. Test ChatBot Data Context</h3>
+            <button onclick="testChatBotContext()">Test Real-time Context</button>
+            <div id="context-result" class="result"></div>
+        </div>
+        
+        <div class="api-test">
+            <h3>5. Sample ChatBot Questions</h3>
+            <p>Try these questions in the ChatBot to verify it uses real database data:</p>
+            <ul>
+                <li>"What's the current performance of New York branch?"</li>
+                <li>"Show me today's footfall numbers"</li>
+                <li>"Compare revenue between all branches"</li>
+                <li>"What are the satisfaction ratings?"</li>
+                <li>"Predict next week's visitor trends"</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080';
+        
+        async function testDatabaseConnection() {
+            const result = document.getElementById('db-result');
+            result.innerHTML = 'Testing database connections...';
+            
+            try {
+                const endDate = new Date().toISOString().split('T')[0];
+                const startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                
+                const tests = [
+                    { name: 'Branch Comparison', url: `${API_BASE}/analytics/branch-comparison?startDate=${startDate}&endDate=${endDate}` },
+                    { name: 'Footfall Trends', url: `${API_BASE}/analytics/footfall-trends?startDate=${startDate}&endDate=${endDate}` },
+                    { name: 'Real-time Stats', url: `${API_BASE}/dashboard/real-time-stats` }
+                ];
+                
+                const results = [];
+                for (const test of tests) {
+                    try {
+                        const response = await fetch(test.url);
+                        const data = await response.json();
+                        results.push({
+                            name: test.name,
+                            status: response.ok ? 'SUCCESS' : 'FAILED',
+                            data: data
+                        });
+                    } catch (error) {
+                        results.push({
+                            name: test.name,
+                            status: 'ERROR',
+                            error: error.message
+                        });
+                    }
+                }
+                
+                result.className = 'result success';
+                result.innerHTML = '<h4>Database Connection Results:</h4><pre>' + JSON.stringify(results, null, 2) + '</pre>';
+                
+            } catch (error) {
+                result.className = 'result error';
+                result.innerHTML = '<h4>Error:</h4>' + error.message;
+            }
+        }
+        
+        async function testFootfallPrediction() {
+            const result = document.getElementById('prediction-result');
+            result.innerHTML = 'Testing footfall prediction...';
+            
+            try {
+                const endDate = new Date().toISOString().split('T')[0];
+                const startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                
+                const response = await fetch(`${API_BASE}/analytics/footfall-trends-with-prediction?startDate=${startDate}&endDate=${endDate}`);
+                const data = await response.json();
+                
+                const predictions = data.filter(item => item.predicted === true);
+                const historical = data.filter(item => item.predicted !== true);
+                
+                result.className = 'result success';
+                result.innerHTML = `
+                    <h4>Prediction Test Results:</h4>
+                    <p>Historical records: ${historical.length}</p>
+                    <p>Predicted records: ${predictions.length}</p>
+                    <h5>Sample predictions:</h5>
+                    <pre>${JSON.stringify(predictions.slice(0, 3), null, 2)}</pre>
+                `;
+                
+            } catch (error) {
+                result.className = 'result error';
+                result.innerHTML = '<h4>Error:</h4>' + error.message;
+            }
+        }
+        
+        async function testNameSwapping() {
+            const result = document.getElementById('name-result');
+            result.innerHTML = 'Testing name swapping...';
+            
+            try {
+                const endDate = new Date().toISOString().split('T')[0];
+                const startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                
+                const response = await fetch(`${API_BASE}/analytics/branch-comparison?startDate=${startDate}&endDate=${endDate}`);
+                const data = await response.json();
+                
+                const branchNames = data.map(branch => branch.branchName);
+                const hasIndianNames = branchNames.some(name => 
+                    name.toLowerCase().includes('siruseri') || 
+                    name.toLowerCase().includes('tnagar') || 
+                    name.toLowerCase().includes('navalur')
+                );
+                
+                result.className = 'result success';
+                result.innerHTML = `
+                    <h4>Name Swapping Test:</h4>
+                    <p>Branch names from API: ${branchNames.join(', ')}</p>
+                    <p>Contains Indian names: ${hasIndianNames ? 'YES (needs frontend swapping)' : 'NO (already swapped)'}</p>
+                    <p>Expected: New York, Washington DC, New Jersey</p>
+                `;
+                
+            } catch (error) {
+                result.className = 'result error';
+                result.innerHTML = '<h4>Error:</h4>' + error.message;
+            }
+        }
+        
+        async function testChatBotContext() {
+            const result = document.getElementById('context-result');
+            result.innerHTML = 'Testing ChatBot context...';
+            
+            try {
+                // Simulate the data fetch that ChatBot does
+                const endDate = new Date().toISOString().split('T')[0];
+                const startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                
+                const [branchResponse, footfallResponse, statsResponse] = await Promise.all([
+                    fetch(`${API_BASE}/analytics/branch-comparison?startDate=${startDate}&endDate=${endDate}`),
+                    fetch(`${API_BASE}/analytics/footfall-trends?startDate=${startDate}&endDate=${endDate}`),
+                    fetch(`${API_BASE}/dashboard/real-time-stats`)
+                ]);
+                
+                const branchData = await branchResponse.json();
+                const footfallData = await footfallResponse.json();
+                const realTimeStats = await statsResponse.json();
+                
+                // Create context like ChatBot does
+                const contextSummary = {
+                    totalBranches: branchData.length,
+                    totalFootfall: branchData.reduce((sum, branch) => sum + (branch.totalFootfall || 0), 0),
+                    totalRevenue: branchData.reduce((sum, branch) => sum + (branch.totalRevenue || 0), 0),
+                    avgSatisfaction: (branchData.reduce((sum, branch) => sum + (branch.customerSatisfaction || 0), 0) / branchData.length).toFixed(1),
+                    systemHealth: realTimeStats.serverHealth,
+                    activeConnections: realTimeStats.activeConnections,
+                    latestFootfall: footfallData[footfallData.length - 1]
+                };
+                
+                result.className = 'result success';
+                result.innerHTML = `
+                    <h4>ChatBot Context Data:</h4>
+                    <pre>${JSON.stringify(contextSummary, null, 2)}</pre>
+                    <p>✅ ChatBot will have access to this real-time data for intelligent responses!</p>
+                `;
+                
+            } catch (error) {
+                result.className = 'result error';
+                result.innerHTML = '<h4>Error:</h4>' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+# Branch Operations Visual Analytics Dashboard - Configuration
+# Client: HDFC Bank
+# Environment: Development
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: branch-operations-analytics
+  
+  # Database Configuration
+  datasource:
+    url: jdbc:mysql://localhost:3306/hdfc_branch_analytics
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    
+  # JPA Configuration
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+        use_sql_comments: true
+    open-in-view: false
+    
+  # Security Configuration
+  security:
+    user:
+      name: admin
+      password: admin123
+      roles: ADMIN
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:hdfcBranchOpsSecretKey2024CognizantDevelopmentTeam}
+  expiration: 86400000 # 24 hours in milliseconds
+
+# API Documentation
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+
+# Logging Configuration
+logging:
+  level:
+    com.hdfc.branchops: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/branch-ops.log
+
+# Management Endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+
+# Custom Application Properties
+app:
+  name: "HDFC Branch Operations Analytics"
+  version: "1.0.0"
+  description: "Visual Analytics Dashboard for Branch Operations"
+  contact:
+    team: "Cognizant Development Team"
+    email: "support@cognizant.com"

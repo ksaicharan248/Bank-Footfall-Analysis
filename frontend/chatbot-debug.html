@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatBot Debug Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .result { margin: 10px 0; padding: 10px; background: #f5f5f5; border-radius: 3px; }
+        .success { background: #d4edda; border-left: 4px solid #28a745; }
+        .error { background: #f8d7da; border-left: 4px solid #dc3545; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 ChatBot Debug Test</h1>
+        <p>This page tests the ChatBot API endpoints and functionality.</p>
+        
+        <div class="test-section">
+            <h3>🔌 API Endpoint Tests</h3>
+            <button onclick="testFootfallAPI()">Test Footfall API</button>
+            <button onclick="testBranchAPI()">Test Branch Comparison API</button>
+            <button onclick="testStatsAPI()">Test Real-time Stats API</button>
+            <button onclick="testAllAPIs()">Test All APIs</button>
+            <div id="api-results"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>💬 ChatBot Response Test</h3>
+            <button onclick="testChatBotResponse()">Test ChatBot Response Generation</button>
+            <div id="chatbot-results"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔄 Name Swapping Test</h3>
+            <button onclick="testNameSwapping()">Test Name Swapping</button>
+            <div id="nameswap-results"></div>
+        </div>
+    </div>
+
+    <script>
+        async function testAPI(endpoint, name) {
+            try {
+                console.log(`Testing ${name}: ${endpoint}`);
+                const response = await fetch(endpoint);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    return {
+                        success: true,
+                        name: name,
+                        endpoint: endpoint,
+                        status: response.status,
+                        data: data,
+                        dataLength: Array.isArray(data) ? data.length : Object.keys(data).length
+                    };
+                } else {
+                    return {
+                        success: false,
+                        name: name,
+                        endpoint: endpoint,
+                        status: response.status,
+                        error: `HTTP ${response.status}: ${response.statusText}`
+                    };
+                }
+            } catch (error) {
+                return {
+                    success: false,
+                    name: name,
+                    endpoint: endpoint,
+                    error: error.message
+                };
+            }
+        }
+
+        async function testFootfallAPI() {
+            const result = await testAPI(
+                'http://localhost:8080/analytics/footfall-trends?startDate=2025-09-01&endDate=2025-09-08',
+                'Footfall Trends'
+            );
+            displayResult('api-results', result);
+        }
+
+        async function testBranchAPI() {
+            const result = await testAPI(
+                'http://localhost:8080/analytics/branch-comparison',
+                'Branch Comparison'
+            );
+            displayResult('api-results', result);
+        }
+
+        async function testStatsAPI() {
+            const result = await testAPI(
+                'http://localhost:8080/dashboard/real-time-stats',
+                'Real-time Stats'
+            );
+            displayResult('api-results', result);
+        }
+
+        async function testAllAPIs() {
+            document.getElementById('api-results').innerHTML = '<p>Testing all APIs...</p>';
+            
+            const footfall = await testAPI(
+                'http://localhost:8080/analytics/footfall-trends?startDate=2025-09-01&endDate=2025-09-08',
+                'Footfall Trends'
+            );
+            
+            const branch = await testAPI(
+                'http://localhost:8080/analytics/branch-comparison',
+                'Branch Comparison'
+            );
+            
+            const stats = await testAPI(
+                'http://localhost:8080/dashboard/real-time-stats',
+                'Real-time Stats'
+            );
+
+            displayMultipleResults('api-results', [footfall, branch, stats]);
+        }
+
+        function testChatBotResponse() {
+            // Simulate ChatBot response generation
+            const testData = {
+                footfallData: [
+                    { date: '2025-09-01', siruseri: 4, tnagar: 2, navalur: 1, total: 7 },
+                    { date: '2025-09-02', siruseri: 6, tnagar: 4, navalur: 3, total: 13 }
+                ],
+                branchData: [
+                    { branchName: 'Siruseri', totalFootfall: 150, totalRevenue: 25000, customerSatisfaction: 4.2 }
+                ]
+            };
+
+            const response = generateMockResponse(testData);
+            displayResult('chatbot-results', {
+                success: true,
+                name: 'ChatBot Response Generation',
+                data: response
+            });
+        }
+
+        function testNameSwapping() {
+            const testNames = ['Siruseri', 'T Nagar', 'Navalur'];
+            const swappedNames = testNames.map(name => {
+                switch(name) {
+                    case 'Siruseri': return 'New York';
+                    case 'T Nagar': return 'Washington DC';
+                    case 'Navalur': return 'New Jersey';
+                    default: return name;
+                }
+            });
+
+            displayResult('nameswap-results', {
+                success: true,
+                name: 'Name Swapping',
+                data: {
+                    original: testNames,
+                    swapped: swappedNames,
+                    mapping: 'Siruseri → New York, T Nagar → Washington DC, Navalur → New Jersey'
+                }
+            });
+        }
+
+        function generateMockResponse(data) {
+            if (data.footfallData && data.footfallData.length > 0) {
+                const latest = data.footfallData[data.footfallData.length - 1];
+                return `📊 **Latest Footfall Data (${latest.date})**:\\n\\n🏢 **New York**: ${latest.siruseri} visitors\\n🏢 **Washington DC**: ${latest.tnagar} visitors\\n🏢 **New Jersey**: ${latest.navalur} visitors\\n\\n📈 **Total**: ${latest.total} visitors across all branches`;
+            }
+            return "📊 I'm your intelligent banking assistant with access to real-time data!";
+        }
+
+        function displayResult(containerId, result) {
+            const container = document.getElementById(containerId);
+            const resultClass = result.success ? 'success' : 'error';
+            
+            let html = `<div class="result ${resultClass}">`;
+            html += `<h4>${result.name}</h4>`;
+            
+            if (result.success) {
+                html += `<p>✅ Success!</p>`;
+                if (result.endpoint) {
+                    html += `<p><strong>Endpoint:</strong> ${result.endpoint}</p>`;
+                    html += `<p><strong>Status:</strong> ${result.status}</p>`;
+                }
+                if (result.dataLength !== undefined) {
+                    html += `<p><strong>Data Records:</strong> ${result.dataLength}</p>`;
+                }
+                if (result.data && typeof result.data === 'object') {
+                    html += `<details><summary>View Data</summary><pre>${JSON.stringify(result.data, null, 2)}</pre></details>`;
+                } else if (result.data) {
+                    html += `<p><strong>Data:</strong> ${result.data}</p>`;
+                }
+            } else {
+                html += `<p>❌ Failed!</p>`;
+                if (result.endpoint) {
+                    html += `<p><strong>Endpoint:</strong> ${result.endpoint}</p>`;
+                }
+                if (result.status) {
+                    html += `<p><strong>Status:</strong> ${result.status}</p>`;
+                }
+                html += `<p><strong>Error:</strong> ${result.error}</p>`;
+            }
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function displayMultipleResults(containerId, results) {
+            const container = document.getElementById(containerId);
+            let html = '<h4>🔍 All API Test Results:</h4>';
+            
+            results.forEach(result => {
+                const resultClass = result.success ? 'success' : 'error';
+                html += `<div class="result ${resultClass}">`;
+                html += `<strong>${result.name}:</strong> `;
+                html += result.success ? '✅ Success' : '❌ Failed';
+                if (result.dataLength !== undefined) {
+                    html += ` (${result.dataLength} records)`;
+                }
+                if (!result.success) {
+                    html += ` - ${result.error}`;
+                }
+                html += '</div>';
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Run initial connectivity test
+        window.onload = function() {
+            console.log('ChatBot Debug Test page loaded');
+            console.log('Backend expected at: http://localhost:8080');
+            console.log('Frontend expected at: http://localhost:5173');
+        };
+    </script>
+</body>
+</html>

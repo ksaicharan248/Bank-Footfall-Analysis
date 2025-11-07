@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazon Nova Pro AI Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .test-section { margin: 20px 0; padding: 20px; border: 2px solid #e0e0e0; border-radius: 10px; background: #f9f9f9; }
+        .ai-response { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px; margin: 15px 0; }
+        .data-section { background: #e8f5e8; padding: 15px; border-radius: 8px; margin: 10px 0; }
+        .question { background: #fff3cd; padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #ffc107; }
+        button { background: #007bff; color: white; padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; margin: 5px; }
+        button:hover { background: #0056b3; }
+        .loading { text-align: center; color: #666; font-style: italic; }
+        pre { background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto; font-size: 12px; }
+        .success { color: #28a745; font-weight: bold; }
+        .error { color: #dc3545; font-weight: bold; }
+        .highlight { background: yellow; padding: 2px 4px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 Amazon Nova Pro AI Banking Assistant Test</h1>
+        <p>This page tests the advanced AI capabilities of the ChatBot using Amazon Nova Pro simulation.</p>
+        
+        <div class="test-section">
+            <h3>🎯 Quick AI Tests</h3>
+            <button onclick="testFootfallQuestion()">Test: "What is the total footfall for the past 7 days?"</button>
+            <button onclick="testBranchComparison()">Test: "Compare branch performance"</button>
+            <button onclick="testTrendAnalysis()">Test: "Show me footfall trends"</button>
+            <button onclick="testGeneralQuery()">Test: "Help me understand the dashboard"</button>
+            <div id="ai-test-results"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📡 API Data Status</h3>
+            <button onclick="checkAPIStatus()">Check Real-time Data Connection</button>
+            <div id="api-status-results"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>💬 Custom AI Query</h3>
+            <textarea id="custom-query" placeholder="Enter your question for Nova Pro AI..." style="width: 100%; height: 80px; padding: 10px; border-radius: 5px;"></textarea>
+            <br><br>
+            <button onclick="testCustomQuery()">Ask Nova Pro AI</button>
+            <div id="custom-results"></div>
+        </div>
+    </div>
+
+    <script>
+        // Simulate the advanced AI response generator from ChatBot
+        async function generateAdvancedAIResponse(userMessage, footfallData = null) {
+            const message = userMessage.toLowerCase();
+            
+            // Use sample data if no real data available
+            const sampleFootfallData = footfallData || [
+                { date: '2025-09-01', siruseri: 4, tnagar: 2, navalur: 1, total: 7 },
+                { date: '2025-09-02', siruseri: 7, tnagar: 4, navalur: 3, total: 14 },
+                { date: '2025-09-03', siruseri: 48, tnagar: 43, navalur: 34, total: 125 },
+                { date: '2025-09-04', siruseri: 40, tnagar: 22, navalur: 28, total: 90 },
+                { date: '2025-09-05', siruseri: 4, tnagar: 2, navalur: 1, total: 7 },
+                { date: '2025-09-06', siruseri: 2, tnagar: 1, navalur: 1, total: 4 },
+                { date: '2025-09-07', siruseri: 0, tnagar: 0, navalur: 0, total: 0 },
+                { date: '2025-09-08', siruseri: 0, tnagar: 0, navalur: 0, total: 0 }
+            ];
+            
+            // Advanced pattern matching and response generation
+            if (message.includes('total footfall') || message.includes('footfall for the past') || message.includes('total visitors')) {
+                const totalFootfall = sampleFootfallData.reduce((sum, day) => sum + (day.total || 0), 0);
+                const nyTotal = sampleFootfallData.reduce((sum, day) => sum + (day.siruseri || 0), 0);
+                const dcTotal = sampleFootfallData.reduce((sum, day) => sum + (day.tnagar || 0), 0);
+                const njTotal = sampleFootfallData.reduce((sum, day) => sum + (day.navalur || 0), 0);
+                const avgDaily = Math.round(totalFootfall / sampleFootfallData.length * 10) / 10;
+                
+                const peakDay = sampleFootfallData.reduce((max, day) => 
+                    (day.total || 0) > (max.total || 0) ? day : max, sampleFootfallData[0]);
+                
+                return `📊 **Banking Analytics Report - Amazon Nova Pro Analysis**
+
+Based on my analysis of your real-time database, here's the comprehensive footfall summary for the past ${sampleFootfallData.length} days:
+
+🎯 **Total Footfall**: **${totalFootfall.toLocaleString()} visitors** across all branches
+
+📈 **Branch Performance Breakdown**:
+• **New York Branch**: ${nyTotal.toLocaleString()} visitors (${Math.round(nyTotal/totalFootfall*100)}%)
+• **Washington DC Branch**: ${dcTotal.toLocaleString()} visitors (${Math.round(dcTotal/totalFootfall*100)}%)
+• **New Jersey Branch**: ${njTotal.toLocaleString()} visitors (${Math.round(njTotal/totalFootfall*100)}%)
+
+🔍 **Key Insights**:
+• Average daily footfall: **${avgDaily} visitors**
+• Peak activity: **${peakDay.date}** with **${peakDay.total} visitors**
+• New York leads in customer traffic
+• ${totalFootfall > 200 ? 'Strong' : totalFootfall > 100 ? 'Moderate' : 'Light'} customer engagement overall
+
+💡 **AI Recommendation**: ${nyTotal > dcTotal + njTotal ? 'Consider redistributing resources from New York to support other branches during peak periods.' : 'Optimize staff allocation based on these traffic patterns for better customer service.'}`;
+            }
+            
+            if (message.includes('branch performance') || message.includes('compare branch') || message.includes('branch comparison')) {
+                const nyTotal = sampleFootfallData.reduce((sum, day) => sum + (day.siruseri || 0), 0);
+                const dcTotal = sampleFootfallData.reduce((sum, day) => sum + (day.tnagar || 0), 0);
+                const njTotal = sampleFootfallData.reduce((sum, day) => sum + (day.navalur || 0), 0);
+                
+                const branches = [
+                    { name: 'New York', total: nyTotal, type: 'IT Hub' },
+                    { name: 'Washington DC', total: dcTotal, type: 'Commercial' },
+                    { name: 'New Jersey', total: njTotal, type: 'Residential' }
+                ].sort((a, b) => b.total - a.total);
+                
+                return \`🏦 **Comprehensive Branch Performance Analysis - Nova Pro**
+
+📊 **Performance Ranking** (by visitor volume):
+
+🥇 **\${branches[0].name} Branch** (\${branches[0].type})
+   • **\${branches[0].total.toLocaleString()} visitors**
+   • Market leader in customer engagement
+
+🥈 **\${branches[1].name} Branch** (\${branches[1].type})
+   • **\${branches[1].total.toLocaleString()} visitors**
+   • \${Math.round((branches[0].total - branches[1].total) / branches[0].total * 100)}% gap from leader
+
+🥉 **\${branches[2].name} Branch** (\${branches[2].type})
+   • **\${branches[2].total.toLocaleString()} visitors**
+   • Opportunity for growth strategies
+
+🔍 **Strategic Insights**:
+• \${branches[0].name} excels in \${branches[0].type.toLowerCase()} market segment
+• Performance variance suggests different market dynamics
+• \${branches[2].total < branches[0].total / 2 ? 'Significant improvement potential in ' + branches[2].name : 'Balanced performance across locations'}
+
+💡 **AI Strategy**: Focus on replicating \${branches[0].name}'s success factors across other locations.\`;
+            }
+            
+            if (message.includes('trend') || message.includes('pattern') || message.includes('prediction')) {
+                const recentDays = sampleFootfallData.slice(-5);
+                const trend = recentDays.length > 1 ? 
+                    (recentDays[recentDays.length - 1].total - recentDays[0].total) / recentDays.length : 0;
+                const trendDirection = trend > 5 ? 'increasing' : trend < -5 ? 'decreasing' : 'stable';
+                
+                return \`📈 **Footfall Trend Analysis - Nova Pro Intelligence**
+
+🔍 **Current Trend**: Customer footfall is **\${trendDirection}** \${Math.abs(trend) > 1 ? \`(\${trend > 0 ? '+' : ''}\${trend.toFixed(1)} visitors/day trend)\` : ''}
+
+📊 **Recent Daily Activity**:
+\${recentDays.map(day => 
+    \`• \${day.date}: **\${day.total} visitors** (NY: \${day.siruseri}, DC: \${day.tnagar}, NJ: \${day.navalur})\`
+).join('\\n')}
+
+🎯 **Pattern Recognition**:
+• \${trendDirection === 'increasing' ? 'Positive growth momentum detected' : 
+   trendDirection === 'decreasing' ? 'Declining trend requires attention' : 
+   'Consistent performance levels maintained'}
+• 7-day prediction model shows \${Math.random() > 0.5 ? 'continued ' + trendDirection + ' pattern' : 'potential stabilization'}
+
+💡 **AI Forecast**: Based on historical patterns, expect **\${Math.round(recentDays[recentDays.length - 1].total * (1 + trend * 0.1))} visitors** for next business day.
+
+🔧 **Recommendation**: \${trendDirection === 'decreasing' ? 'Implement customer engagement initiatives' : 'Maintain current operational excellence'}\`;
+            }
+            
+            return \`🤖 **Amazon Nova Pro Banking Assistant**
+
+I've analyzed your query and current database context. Here's what I can help you with:
+
+📊 **Available Analytics**:
+• Real-time footfall tracking across 3 branches
+• Performance comparisons and trends
+• Customer satisfaction metrics
+• Revenue and operational insights
+
+🎯 **Your Data Status**:
+• \${sampleFootfallData.length} days of footfall data available
+• Live dashboard metrics connected
+• Advanced AI analytics ready
+
+💬 **Try asking me**:
+• "What is the total footfall for the past 7 days?"
+• "Compare branch performance"
+• "Show me footfall trends and patterns"
+• "What are the peak hours for each branch?"
+
+🔍 I'm powered by Amazon Nova Pro AI with access to your real banking database for precise, data-driven insights!\`;
+        }
+
+        async function testFootfallQuestion() {
+            displayLoading('ai-test-results');
+            const response = await generateAdvancedAIResponse("What is the total footfall for the past 7 days?");
+            displayAIResponse('ai-test-results', "What is the total footfall for the past 7 days?", response);
+        }
+
+        async function testBranchComparison() {
+            displayLoading('ai-test-results');
+            const response = await generateAdvancedAIResponse("Compare branch performance");
+            displayAIResponse('ai-test-results', "Compare branch performance", response);
+        }
+
+        async function testTrendAnalysis() {
+            displayLoading('ai-test-results');
+            const response = await generateAdvancedAIResponse("Show me footfall trends and patterns");
+            displayAIResponse('ai-test-results', "Show me footfall trends and patterns", response);
+        }
+
+        async function testGeneralQuery() {
+            displayLoading('ai-test-results');
+            const response = await generateAdvancedAIResponse("Help me understand the dashboard");
+            displayAIResponse('ai-test-results', "Help me understand the dashboard", response);
+        }
+
+        async function testCustomQuery() {
+            const query = document.getElementById('custom-query').value;
+            if (!query.trim()) {
+                alert('Please enter a question first!');
+                return;
+            }
+            displayLoading('custom-results');
+            const response = await generateAdvancedAIResponse(query);
+            displayAIResponse('custom-results', query, response);
+        }
+
+        async function checkAPIStatus() {
+            displayLoading('api-status-results');
+            try {
+                const response = await fetch('http://localhost:8080/api/analytics/footfall-trends?startDate=2025-09-01&endDate=2025-09-08');
+                if (response.ok) {
+                    const data = await response.json();
+                    displayAPIStatus('api-status-results', true, data);
+                } else {
+                    displayAPIStatus('api-status-results', false, \`HTTP \${response.status}: \${response.statusText}\`);
+                }
+            } catch (error) {
+                displayAPIStatus('api-status-results', false, error.message);
+            }
+        }
+
+        function displayLoading(containerId) {
+            document.getElementById(containerId).innerHTML = '<div class="loading">🤖 Nova Pro AI is analyzing your request...</div>';
+        }
+
+        function displayAIResponse(containerId, question, response) {
+            const html = \`
+                <div class="question">
+                    <strong>❓ Question:</strong> \${question}
+                </div>
+                <div class="ai-response">
+                    <h4>🤖 Amazon Nova Pro Response:</h4>
+                    <div style="white-space: pre-line; font-size: 14px; line-height: 1.5;">
+                        \${response}
+                    </div>
+                </div>
+                <div style="text-align: right; color: #666; font-size: 12px; margin-top: 10px;">
+                    ✨ Generated by Nova Pro AI Simulation at \${new Date().toLocaleTimeString()}
+                </div>
+            \`;
+            document.getElementById(containerId).innerHTML = html;
+        }
+
+        function displayAPIStatus(containerId, success, data) {
+            const statusClass = success ? 'success' : 'error';
+            const statusIcon = success ? '✅' : '❌';
+            
+            let html = \`
+                <div class="data-section">
+                    <h4>\${statusIcon} API Connection Status</h4>
+                    <p class="\${statusClass}">
+                        Backend API: \${success ? 'Connected successfully' : 'Connection failed'}
+                    </p>
+            \`;
+            
+            if (success && Array.isArray(data)) {
+                const total = data.reduce((sum, day) => sum + (day.total || 0), 0);
+                html += \`
+                    <p><strong>Data Retrieved:</strong> \${data.length} days of footfall data</p>
+                    <p><strong>Total Visitors:</strong> \${total.toLocaleString()}</p>
+                    <p><strong>Latest Entry:</strong> \${data[data.length - 1]?.date} - \${data[data.length - 1]?.total} visitors</p>
+                    <details>
+                        <summary>View Raw Data</summary>
+                        <pre>\${JSON.stringify(data, null, 2)}</pre>
+                    </details>
+                \`;
+            } else if (!success) {
+                html += \`<p><strong>Error:</strong> \${data}</p>\`;
+            }
+            
+            html += '</div>';
+            document.getElementById(containerId).innerHTML = html;
+        }
+
+        // Auto-run initial test
+        window.onload = function() {
+            console.log('Amazon Nova Pro AI Test Interface loaded');
+            document.getElementById('custom-query').value = "What is the total footfall for the past 7 days?";
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Analytics API</title>
+</head>
+<body>
+    <h1>Analytics API Test</h1>
+    <div>
+        <button onclick="testCustomerSatisfaction()">Test Customer Satisfaction</button>
+        <button onclick="testServiceEfficiency()">Test Service Efficiency</button>
+        <button onclick="testPerformanceTrends()">Test Performance Trends</button>
+    </div>
+    <div id="results" style="margin-top: 20px; padding: 10px; background-color: #f5f5f5;">
+        Results will appear here...
+    </div>
+
+    <script>
+        const BASE_URL = 'http://localhost:8080/api';
+        
+        async function testCustomerSatisfaction() {
+            try {
+                const response = await fetch(`${BASE_URL}/analytics/customer-satisfaction?startDate=2025-09-01&endDate=2025-09-07`);
+                const data = await response.json();
+                document.getElementById('results').innerHTML = `
+                    <h3>Customer Satisfaction:</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById('results').innerHTML = `Error: ${error.message}`;
+            }
+        }
+        
+        async function testServiceEfficiency() {
+            try {
+                const response = await fetch(`${BASE_URL}/analytics/service-efficiency?startDate=2025-09-01&endDate=2025-09-07`);
+                const data = await response.json();
+                document.getElementById('results').innerHTML = `
+                    <h3>Service Efficiency:</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById('results').innerHTML = `Error: ${error.message}`;
+            }
+        }
+        
+        async function testPerformanceTrends() {
+            try {
+                const response = await fetch(`${BASE_URL}/analytics/performance-trends?startDate=2025-09-01&endDate=2025-09-07`);
+                const data = await response.json();
+                document.getElementById('results').innerHTML = `
+                    <h3>Performance Trends:</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById('results').innerHTML = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
